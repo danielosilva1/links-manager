@@ -20,8 +20,12 @@ import { useCallback, useState } from "react";
 import { styles } from "./styles";
 
 export default function Index() {
+  const [showModal, setShowModal] = useState(false);
   const [category, setCategory] = useState(categories[0].label);
   const [links, setLinks] = useState<LinkStorage[]>([]);
+  const [selectedLink, setSelectedLink] = useState<LinkStorage>(
+    {} as LinkStorage
+  );
 
   async function getLinks() {
     try {
@@ -34,6 +38,11 @@ export default function Index() {
     } catch (error) {
       Alert.alert("Erro", "Não foi possível listar os links");
     }
+  }
+
+  function handleDetails(selected: LinkStorage) {
+    setShowModal(true);
+    setSelectedLink(selected);
   }
 
   useFocusEffect(
@@ -61,7 +70,7 @@ export default function Index() {
           <Link
             label={item.label}
             url={item.url}
-            onDetails={() => console.log("Clicou...")}
+            onDetails={() => handleDetails(item)}
           />
         )}
         style={styles.links}
@@ -69,13 +78,13 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       />
 
-      <Modal transparent visible={false}>
+      <Modal transparent visible={showModal} animationType="slide">
         <View style={styles.modal}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalCategory}>Curso</Text>
+              <Text style={styles.modalCategory}>{selectedLink.category}</Text>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowModal(false)}>
                 <MaterialIcons
                   name="close"
                   size={20}
@@ -84,8 +93,8 @@ export default function Index() {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.modalLinkLabel}>Rocketseat</Text>
-            <Text style={styles.modalUrl}>https://rocketseat.com.br</Text>
+            <Text style={styles.modalLinkLabel}>{selectedLink.label}</Text>
+            <Text style={styles.modalUrl}>{selectedLink.url}</Text>
 
             <View style={styles.modalFooter}>
               <Option label={"Excluir"} icon="delete" variant="secondary" />
