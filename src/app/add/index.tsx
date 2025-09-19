@@ -2,19 +2,30 @@ import { Button } from "@/components/button";
 import { Categories } from "@/components/categories";
 import { Input } from "@/components/input";
 import { colors } from "@/styles/colors";
-import { categories } from "@/utils/categories";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 
 export default function Add() {
   const [label, setLabel] = useState("");
   const [url, setUrl] = useState("");
-  const [category, setCategory] = useState(categories[0].label);
+  const [category, setCategory] = useState("");
 
   function handleAdd() {
+    if (!category) {
+      return Alert.alert("Categoria", "Selecione a categoria");
+    }
+
+    if (!label.trim()) {
+      return Alert.alert("Nome", "Informe o nome");
+    }
+
+    if (!url.trim()) {
+      return Alert.alert("URL", "Informe a URL");
+    }
+
     console.log({ label, url, category });
   }
 
@@ -37,7 +48,7 @@ export default function Add() {
           onChangeText={setLabel}
           autoCorrect={false}
         />
-        <Input placeholder="Url" onChangeText={setUrl} autoCorrect={false} />
+        <Input placeholder="URL" onChangeText={setUrl} autoCorrect={false} />
 
         <Button label="Adicionar" onPress={handleAdd} />
       </View>
