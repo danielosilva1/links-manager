@@ -3,6 +3,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Linking,
   Modal,
   Text,
   TouchableOpacity,
@@ -63,6 +64,16 @@ export default function Index() {
     ]);
   }
 
+  async function handleOpen() {
+    try {
+      await Linking.openURL(selectedLink.url);
+      setShowModal(false);
+    } catch (error) {
+      Alert.alert("Link", "Não foi possível abrir o link");
+      console.error(error);
+    }
+  }
+
   useFocusEffect(
     useCallback(() => {
       getLinks();
@@ -121,7 +132,7 @@ export default function Index() {
                 variant="secondary"
                 onPress={handleRemove}
               />
-              <Option label={"Abrir"} icon="language" />
+              <Option label={"Abrir"} icon="language" onPress={handleOpen} />
             </View>
           </View>
         </View>
