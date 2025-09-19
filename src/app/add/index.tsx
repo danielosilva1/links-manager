@@ -8,25 +8,40 @@ import { useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 
+import { linkStorage } from "@/storage/link-storage";
+
 export default function Add() {
   const [label, setLabel] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState("");
 
-  function handleAdd() {
-    if (!category) {
-      return Alert.alert("Categoria", "Selecione a categoria");
-    }
+  async function handleAdd() {
+    try {
+      if (!category) {
+        return Alert.alert("Categoria", "Selecione a categoria");
+      }
 
-    if (!label.trim()) {
-      return Alert.alert("Nome", "Informe o nome");
-    }
+      if (!label.trim()) {
+        return Alert.alert("Nome", "Informe o nome");
+      }
 
-    if (!url.trim()) {
-      return Alert.alert("URL", "Informe a URL");
-    }
+      if (!url.trim()) {
+        return Alert.alert("URL", "Informe a URL");
+      }
 
-    console.log({ label, url, category });
+      await linkStorage.save({
+        id: new Date().getTime().toString(),
+        label,
+        url,
+        category,
+      });
+
+      const data = await linkStorage.get();
+      console.log(data);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível salvar o link");
+      console.error(error);
+    }
   }
 
   return (
@@ -48,7 +63,12 @@ export default function Add() {
           onChangeText={setLabel}
           autoCorrect={false}
         />
-        <Input placeholder="URL" onChangeText={setUrl} autoCorrect={false} />
+        <Input
+          placeholder="URL"
+          onChangeText={setUrl}
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
 
         <Button label="Adicionar" onPress={handleAdd} />
       </View>
